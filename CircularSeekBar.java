@@ -2,8 +2,9 @@
  * @author Raghav Sood
  * @version 1
  * @date 26 January, 2013
- */
-package com.appaholics.circularseekbar;
+ *
+	*Modified by Steven F. To support circles with transparent center and with shortest path lines
+/
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -20,7 +21,10 @@ import android.view.View;
  * The Class CircularSeekBar.
  */
 public class CircularSeekBar extends View {
-
+	final boolean SHORTEST_PATH=true;
+	/**This variable enables/disables shortest path for the blue line,
+	 *  if it is true then blue line will 
+	 *  go left  if the angle is > then 180 and right other wise */
 	/** The context */
 	private Context mContext;
 
@@ -150,7 +154,7 @@ public class CircularSeekBar extends View {
 																// progress
 																// color to holo
 																// blue.
-		innerColor.setColor(Color.BLACK); // Set default background color to
+		innerColor.setColor(Color.TRANSPARENT); // Set default background color to
 											// black
 		circleRing.setColor(Color.GRAY);// Set default background color to Gray
 
@@ -162,7 +166,8 @@ public class CircularSeekBar extends View {
 		innerColor.setStrokeWidth(5);
 		circleRing.setStrokeWidth(5);
 
-		circleColor.setStyle(Paint.Style.FILL);
+		circleRing.setStyle(Paint.Style.STROKE);
+		circleColor.setStyle(Paint.Style.STROKE);
 	}
 
 	/**
@@ -262,9 +267,22 @@ public class CircularSeekBar extends View {
 		dx = getXFromAngle();
 		dy = getYFromAngle();
 
-		canvas.drawCircle(cx, cy, outerRadius, circleRing);
-		canvas.drawArc(rect, startAngle, angle, true, circleColor);
-		canvas.drawCircle(cx, cy, innerRadius, innerColor);
+		//canvas.drawCircle(cx, cy, outerRadius, circleRing);
+		
+		
+		if(!SHORTEST_PATH || angle<=180){
+
+			canvas.drawArc(rect, 0, 360, false, circleRing);
+			canvas.drawArc(rect, startAngle, angle, false, circleColor);
+		}
+		else{
+			canvas.drawArc(rect, 0, 360, false, circleRing);
+			canvas.drawArc(rect,  startAngle, angle-360, false, circleColor);
+		}
+		
+		
+		
+		//canvas.drawCircle(cx, cy, innerRadius, innerColor);
 		drawMarkerAtProgress(canvas);
 
 		super.onDraw(canvas);
